@@ -1,6 +1,6 @@
 from pydub import AudioSegment
 
-def add_background_music(speech_file='output.mp3', music_file='background.mp3', output_file='final_output.mp3'):
+def add_background_music(speech_file='output.mp3', music_file='./input/background.mp3', output_file='final_output.mp3'):
     try:
         # Load the audio files
         speech = AudioSegment.from_file(speech_file)

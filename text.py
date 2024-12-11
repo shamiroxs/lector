@@ -9,6 +9,7 @@ def read_text_file(file_path):
 def text_to_speech(text):
     url = "http://localhost:5000/synthesize"
     payload = {'text': text}  # Sending the text as form data
+    print("Processing ..")
     try:
         response = requests.post(url, data=payload)
         

@@ -1,9 +1,9 @@
-from moviepy.editor import *
-from moviepy.video.fx import fadein
+from moviepy.editor import ImageClip, AudioFileClip
+from moviepy.video.fx.all import fadein  # Import the correct fadein function
 from PIL import Image
 import numpy as np
 
-def create_video_from_audio(image_file='image.png', audio_file='final_output.mp3', output_file='vout.mp4'):
+def create_video_from_audio(image_file='./input/image.png', audio_file='final_output.mp3', output_file='vout.mp4'):
     try:
         # Load the image and reduce opacity
         image = Image.open(image_file).convert("RGBA")
@@ -17,7 +17,7 @@ def create_video_from_audio(image_file='image.png', audio_file='final_output.mp3
         # Define the target video size (1920x1080)
         video_width, video_height = 1920, 1080
         
-        # If the image is smaller than the video resolution, pad it with black
+        # Case 1: If the image is smaller than the video resolution, pad it with black
         if img_width < video_width or img_height < video_height:
             # Create a new black image with the target resolution
             new_image = Image.new("RGBA", (video_width, video_height), (0, 0, 0, 255))
@@ -26,13 +26,18 @@ def create_video_from_audio(image_file='image.png', audio_file='final_output.mp3
             new_image.paste(image, ((video_width - img_width) // 2, (video_height - img_height) // 2))
             image = new_image
         
-        # If the image is larger than the video resolution, resize it to fit within the video frame
+        # Case 2: If the image is larger than the video resolution, resize it to fit within the video frame
         elif img_width > video_width or img_height > video_height:
+            # Resize image to fit within the video resolution (keeping aspect ratio intact)
             image = image.resize((video_width, video_height), Image.ANTIALIAS)
 
-        # Convert the image to an ImageClip for the video
-        video_clip = ImageClip(np.array(image)).set_duration(AudioFileClip(audio_file).duration)
+        # Case 3: If the image is already the same size as the video, no change is needed
+        # (This case is implicitly handled as the image would remain the same)
 
+        # Convert the image to an ImageClip for the video
+        video_clip = ImageClip(np.array(image))
+        video_clip = video_clip.set_duration(AudioFileClip(audio_file).duration)
+        
         # Load the audio file
         audio_clip = AudioFileClip(audio_file)
 
@@ -52,3 +57,4 @@ def create_video_from_audio(image_file='image.png', audio_file='final_output.mp3
 
 if __name__ == "__main__":
     create_video_from_audio()
+
