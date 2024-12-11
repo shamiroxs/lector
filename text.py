@@ -26,7 +26,7 @@ def text_to_speech(text):
 # Main function to load the file and send it to XTTS
 def main():
     # Automatically use 'ebook.txt' as the file path
-    file_path = "ebook.txt"
+    file_path = "input.txt"
     text = read_text_file(file_path)
     
     # Sending the text to the XTTS server
