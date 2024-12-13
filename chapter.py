@@ -2,6 +2,9 @@ import re
 import os
 import subprocess
 
+# Declare `total_chapters` as a global variable
+total_chapters = 0
+
 def extract_chapter(full_file, chapter_number, output_file):
     try:
         with open(full_file, 'r') as file:
@@ -23,12 +26,15 @@ def extract_chapter(full_file, chapter_number, output_file):
         with open(output_file, 'w') as output:
             output.write(chapter_content)
 
-        print(f"Extracted Chapter {chapter_number} to {output_file}")
+        # Updated message with the adjusted chapter number
+        print(f"Extracted Chapter {chapter_number - total_chapters} to {output_file}")
     except Exception as e:
-        print(f"Error extracting chapter {chapter_number}: {e}")
+        print(f"Error extracting chapter {chapter_number - total_chapters}: {e}")
 
 
 def main():
+    global total_chapters
+
     full_file = "input/full.txt"
     output_file = "input.txt"
 
