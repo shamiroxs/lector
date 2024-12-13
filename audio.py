@@ -49,6 +49,6 @@ def create_final_audio(audio_file, background_file, output_file):
 
 if __name__ == "__main__":
     audio_file = "output.mp3"
-    background_file = "background.mp3"
+    background_file = "./input/background.mp3"
     output_file = "final_output.mp3"
     create_final_audio(audio_file, background_file, output_file)
