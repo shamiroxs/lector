@@ -35,19 +35,23 @@ def main():
     # Ask user for the total number of chapters
     total_chapters = int(input("Enter the total number of chapters to process: "))
 
-    for chapter_number in range(1, total_chapters + 1):
+    # Skip the first `total_chapters` (index page)
+    start_chapter = total_chapters + 1
+    print(f"Skipping the first {total_chapters} chapters (index page)")
+
+    for chapter_number in range(start_chapter, total_chapters + start_chapter):
         extract_chapter(full_file, chapter_number, output_file)
 
         # Run loop.py to process the current chapter
         subprocess.run(["python", "loop.py"])
 
         # Rename the output video
-        output_video = f"chapter{chapter_number}.mp4"
+        output_video = f"chapter{chapter_number - total_chapters}.mp4"
         if os.path.exists("vout.mp4"):
             os.rename("vout.mp4", output_video)
             print(f"Renamed vout.mp4 to {output_video}")
         else:
-            print(f"Error: vout.mp4 not found after processing Chapter {chapter_number}")
+            print(f"Error: vout.mp4 not found after processing Chapter {chapter_number - total_chapters}")
 
 if __name__ == "__main__":
     main()
