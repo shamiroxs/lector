@@ -1,6 +1,7 @@
 import re
 import os
 import subprocess
+import shutil
 
 # Declare `total_chapters` as a global variable
 total_chapters = 0
@@ -53,11 +54,20 @@ def main():
 
         # Rename the output video
         output_video = f"chapter{chapter_number - total_chapters}.mp4"
+        destination_path = f"./chapters/{output_video}"
+
+        # Check if the file exists and remove it if necessary
+        if os.path.exists(destination_path):
+            os.remove(destination_path)
+            print(f"Deleted existing file: {destination_path}")
+
         if os.path.exists("vout.mp4"):
             os.rename("vout.mp4", output_video)
+            shutil.move(output_video, "./chapters")
             print(f"Renamed vout.mp4 to {output_video}")
         else:
             print(f"Error: vout.mp4 not found after processing Chapter {chapter_number - total_chapters}")
 
 if __name__ == "__main__":
     main()
+
