@@ -4,128 +4,113 @@ Lector is a Python-based project that transforms text into audio and video forma
 
 ---
 
-## Features
+## **Features**
 
-- **Text-to-Audio Conversion**: Converts text from an input file to audio using a text-to-speech (TTS) engine.
-- **Audio-to-Video Creation**: Combines the generated audio with an image to create a video.
-- **Chapter Splitting**: Automatically splits large text files (`full.txt`) into chapters based on headings (`CHAPTER X` format).
-- **Background Music**: Adds looping background music to the audio with fade-in and fade-out effects.
-- **Video Upload Support**: Integration-ready for uploading videos to YouTube.
-- **Customizable Options**: Supports custom input files, background music, and output configurations.
-
----
-
-## Installation
-
-### Prerequisites
-- **Python 3.7 or later**
-- **Pip** (Python package manager)
-- **ffmpeg** (for audio and video processing)
-
-### Setting Up the Environment
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/lector.git
-   cd lector
-   ```
-2. Create and activate a virtual environment:
-   ```bash
-   python3 -m venv myenv
-   source myenv/bin/activate  # On Windows, use: myenv\Scripts\activate
-   ```
-3. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Ensure `ffmpeg` is installed on your system:
-   ```bash
-   sudo apt update
-   sudo apt install ffmpeg
-   ```
+- **GUI for File Input**: Use a Pygame-based interface to upload the required files (ebook, background music, and image).
+- **Chapter Extraction**: Extracts chapters from the ebook text file while skipping the table of contents.
+- **Custom Video Generation**: Combines text, background music, and an image into chapter-wise videos.
+- **Video Merging**: Merges all chapter videos into a single file.
+- **Chapter Details**: Generates a text file with chapter start times in `hh:mm:ss` format.
+- **Clipboard Integration**: Paste text directly into the GUI using `Ctrl+V`.
 
 ---
 
-## Usage
+## **Requirements**
 
-### 1. Prepare Input Files
-- Place your full text file (e.g., `full.txt`) in the `input/` directory.
-- Add a background music file (e.g., `background.mp3`) to the same directory (optional).
-
-### 2. Process Chapters
-Run the `chapter.py` script to process each chapter:
+### **Python Libraries**
+Install the required libraries using pip:
 ```bash
-python chapter.py
-```
-- The script will prompt you to enter the number of chapters to skip (e.g., for the index page).
-- Each chapter will be saved as `input.txt`, processed into audio and video, and saved as `chapterX.mp4`.
-
-### 3. Text-to-Audio-Video Workflow
-The project follows these steps automatically:
-- **Text File Processing (`text.py`)**: Converts the content of `input.txt` into an audio file (`output.mp3`).
-- **Audio Processing (`audio.py`)**: Adds background music to the generated audio and saves it as `final_output.mp3`.
-- **Video Creation (`video.py`)**: Combines the audio with an image and saves it as `vout.mp4`.
-
-### 4. Customization
-- **Image**: Replace the default image (`image.png`) in the project directory to use a custom image.
-- **Background Music**: Replace `background.mp3` in the `input/` directory with your preferred background music.
-
----
-
-## File Structure
-
-```
-lector/
-│
-├── input/
-│   ├── full.txt           # Full text file containing the entire book
-│   ├── background.mp3     # Background music (optional)
-│   └── image.png          # Default image for video
-│
-├── text.py                # Converts text to audio
-├── audio.py               # Adds background music to audio
-├── video.py               # Creates video from audio and image
-├── chapter.py             # Splits the text into chapters and processes each one
-├── loop.py                # Executes text.py, audio.py, and video.py in sequence
-├── requirements.txt       # Python dependencies
-├── README.md              # Project documentation
-└── .gitignore             # Ignored files
+pip install pygame pydub moviepy pyperclip
 ```
 
----
-
-## Future Features
-
-- **YouTube Upload**: Automate the upload of generated videos to YouTube.
-- **Enhanced Chapter Detection**: Support more diverse formats for chapter headings.
-- **Multilingual Support**: Extend TTS support for multiple languages.
-
----
-
-## Contributing
-
-Contributions are welcome! To contribute:
-1. Fork this repository.
-2. Create a feature branch:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit your changes and push the branch:
-   ```bash
-   git push origin feature-name
-   ```
-4. Submit a pull request.
+### **System Requirements**
+- **SoX (Sound eXchange)**: For advanced audio effects like reverb. Install using:
+  ```bash
+  sudo apt install sox libsox-fmt-mp3
+  ```
+- A working installation of `kdialog` for file browsing (on Linux-based systems).
+- Ensure `ffmpeg` is installed for handling video processing:
+  ```bash
+  sudo apt install ffmpeg
+  ```
 
 ---
 
-## License
+## **How to Run**
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+### Step 1: Prepare the Files
+- **Ebook File (`full.txt`)**: Ensure the ebook is in `.txt` format and follows a structured format with chapters clearly labeled as `CHAPTER I`, `CHAPTER II`, etc.
+- **Background Music (`background.mp3`)**: A `.mp3` file to serve as background audio for the videos.
+- **Image (`image.png`)**: An image file to be used as the video background.
+
+### Step 2: Execute `run.py`
+Run the main script to start the GUI:
+```bash
+python run.py
+```
+
+### Step 3: Upload Files via GUI
+1. **Title & Description**: Input the title and description of the video.
+2. **File Upload**: Use the buttons to select the image, music, and ebook files. If a file is missing, the program will prompt for it.
+
+### Step 4: Automated Processing
+Once all required files are uploaded:
+1. The program extracts chapters from the ebook.
+2. For each chapter:
+   - Background music is added.
+   - The chapter content is overlaid on the image.
+3. Outputs are saved as `chapterX.mp4` files in the `./chapters` folder.
+
+### Step 5: Video Merging
+After processing all chapters:
+- All chapter videos are merged into a single file (`full_chapter.mp4`).
+- Chapter start times are recorded in a text file (`chapter details.txt`).
 
 ---
 
-## Acknowledgments
+## **File Structure**
 
-- [gTTS](https://pypi.org/project/gTTS/) for text-to-speech conversion.
-- [Pydub](https://pypi.org/project/pydub/) for audio processing.
-- [MoviePy](https://zulko.github.io/moviepy/) for video creation.
-- Special thanks to the open-source community for their amazing tools and resources.
+- `input/`: Contains input files such as `full.txt`, `background.mp3`, and `image.png`.
+- `chapters/`: Contains individual chapter videos (`chapterX.mp4`) and `chapter details.txt`.
+- `input/full_chapter.mp4`: The final merged video.
+
+---
+
+## **Scripts Overview**
+
+### **1. `run.py`**
+- GUI for file selection and title/description input.
+- Ensures required files are uploaded before starting the chapter processing.
+
+### **2. `chapter.py`**
+- Extracts chapters from the ebook.
+- Processes each chapter sequentially, creating `chapterX.mp4` videos.
+
+### **3. `merge.py`**
+- Merges all chapter videos into a single file (`full_chapter.mp4`).
+
+### **4. `details.py`**
+- Generates a timestamp file (`chapter details.txt`) with chapter start times.
+
+---
+
+## **Customization**
+
+### Reverb Effect
+If you want to add a reverb effect to the background music:
+- Ensure SoX is installed.
+- Update `audio.py` to include a reverb step using:
+  ```bash
+  sox background.mp3 reverb_background.mp3 reverb 50 50 100 0.5
+  ```
+
+---
+
+## **Limitations**
+- File upload uses `kdialog`, which is Linux-specific. For cross-platform compatibility, replace `kdialog` with `tkinter` or similar file dialogs.
+- Ensure proper chapter formatting in the ebook for smooth processing.
+
+---
+
+## **License**
+This project is licensed under the MIT License.
