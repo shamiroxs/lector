@@ -4,6 +4,17 @@ Lector is a Python-based project that transforms text into audio and video forma
 
 ---
 
+## Run
+![run.py](image.png)
+
+## chapter1.mp4
+<video controls>
+  <source src="chapters/video.mp4" type="video/mp4">
+
+</video>
+
+---
+
 ## **Features**
 
 - **GUI for File Input**: Use a Pygame-based interface to upload the required files (ebook, background music, and image).
@@ -12,11 +23,6 @@ Lector is a Python-based project that transforms text into audio and video forma
 - **Video Merging**: Merges all chapter videos into a single file.
 - **Chapter Details**: Generates a text file with chapter start times in `hh:mm:ss` format.
 - **Clipboard Integration**: Paste text directly into the GUI using `Ctrl+V`.
-
----
-
-## Run
-![run.py](image.png)
 
 ---
 
