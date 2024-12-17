@@ -7,12 +7,6 @@ Lector is a Python-based project that transforms text into audio and video forma
 ## Run
 ![run.py](image.png)
 
-## chapter1.mp4
-<video controls>
-  <source src="chapters/video.mp4" type="video/mp4">
-
-</video>
-
 ---
 
 ## **Features**
