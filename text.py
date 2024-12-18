@@ -1,4 +1,5 @@
 import requests
+import time
 
 # Function to read the content of the text file
 def read_text_file(file_path):
@@ -20,6 +21,9 @@ def text_to_speech(text):
             print("Audio file has been saved as 'output.mp3'")
         else:
             print(f"Error: {response.status_code}. Could not generate audio.")
+            print("Suspended for 1 hour.")
+            time.sleep(3600)
+            text_to_speech(text)
     
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")

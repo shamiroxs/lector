@@ -2,9 +2,11 @@ import re
 import os
 import subprocess
 import shutil
+import json
 
 # Declare `total_chapters` as a global variable
 total_chapters = 0
+progress_file = "progress.json"
 
 def extract_chapter(full_file, chapter_number, output_file):
     try:
@@ -32,6 +34,20 @@ def extract_chapter(full_file, chapter_number, output_file):
     except Exception as e:
         print(f"Error extracting chapter {chapter_number - total_chapters}: {e}")
 
+def save_progress(chapter_number):
+    """Save the last completed chapter to the progress file."""
+    progress = {"last_completed_chapter": chapter_number - total_chapters -1}
+    with open(progress_file, 'w') as file:
+        json.dump(progress, file)
+    print(f"Progress saved: Chapter {chapter_number - total_chapters}")
+
+def load_progress():
+    """Load the last completed chapter from the progress file."""
+    if os.path.exists(progress_file):
+        with open(progress_file, 'r') as file:
+            progress = json.load(file)
+        return progress.get("last_completed_chapter", 0)
+    return 0
 
 def main():
     global total_chapters
@@ -42,11 +58,12 @@ def main():
     # Ask user for the total number of chapters
     total_chapters = int(input("Enter the total number of chapters to process: "))
 
-    # Skip the first `total_chapters` (index page)
-    start_chapter = total_chapters + 1
-    print(f"Skipping the first {total_chapters} chapters (index page)")
+    # Determine where to resume
+    last_completed_chapter = load_progress()
+    start_chapter = total_chapters + last_completed_chapter + 1
+    print(f"Resuming from Chapter {start_chapter - total_chapters -1}")
 
-    for chapter_number in range(start_chapter, total_chapters + start_chapter):
+    for chapter_number in range(start_chapter, 2* total_chapters):
         extract_chapter(full_file, chapter_number, output_file)
 
         # Run loop.py to process the current chapter
@@ -65,6 +82,9 @@ def main():
             os.rename("vout.mp4", output_video)
             shutil.move(output_video, "./chapters")
             print(f"Renamed vout.mp4 to {output_video}")
+
+            # Save progress after successful processing
+            save_progress(chapter_number)
         else:
             print(f"Error: vout.mp4 not found after processing Chapter {chapter_number - total_chapters}")
 
