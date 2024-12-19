@@ -7,6 +7,7 @@ import json
 # Declare `total_chapters` as a global variable
 total_chapters = 0
 progress_file = "progress.json"
+total_chapters_file = "total_chapters.txt"
 
 def extract_chapter(full_file, chapter_number, output_file):
     try:
@@ -29,14 +30,13 @@ def extract_chapter(full_file, chapter_number, output_file):
         with open(output_file, 'w') as output:
             output.write(chapter_content)
 
-        # Updated message with the adjusted chapter number
         print(f"Extracted Chapter {chapter_number - total_chapters} to {output_file}")
     except Exception as e:
         print(f"Error extracting chapter {chapter_number - total_chapters}: {e}")
 
 def save_progress(chapter_number):
     """Save the last completed chapter to the progress file."""
-    progress = {"last_completed_chapter": chapter_number - total_chapters -1}
+    progress = {"last_completed_chapter": chapter_number - total_chapters - 1}
     with open(progress_file, 'w') as file:
         json.dump(progress, file)
     print(f"Progress saved: Chapter {chapter_number - total_chapters}")
@@ -49,25 +49,44 @@ def load_progress():
         return progress.get("last_completed_chapter", 0)
     return 0
 
+def save_total_chapters(total_chapters):
+    """Save the total chapters to a file."""
+    with open(total_chapters_file, 'w') as file:
+        file.write(str(total_chapters))
+    print(f"Total chapters saved: {total_chapters}")
+
+def load_total_chapters():
+    """Load the total chapters from a file."""
+    if os.path.exists(total_chapters_file):
+        with open(total_chapters_file, 'r') as file:
+            return int(file.read().strip())
+    return 0
+
 def main():
     global total_chapters
 
     full_file = "input/full.txt"
     output_file = "input.txt"
 
-    # Ask user for the total number of chapters
-    total_chapters = int(input("Enter the total number of chapters to process: "))
+    # Load progress
+    last_completed_chapter = load_progress()
+
+    # If last_completed_chapter is 0, ask user for total chapters and save it
+    if last_completed_chapter == 0:
+        total_chapters = int(input("Enter the total number of chapters to process: "))
+        save_total_chapters(total_chapters)
+    else:
+        total_chapters = load_total_chapters()
 
     # Determine where to resume
-    last_completed_chapter = load_progress()
     start_chapter = total_chapters + last_completed_chapter + 1
     print(f"Resuming from Chapter {start_chapter - total_chapters}")
 
-    for chapter_number in range(start_chapter, 2* total_chapters):
+    for chapter_number in range(start_chapter, 2 * total_chapters):
         extract_chapter(full_file, chapter_number, output_file)
 
         # Run loop.py to process the current chapter
-        subprocess.run(["python", "loop.py"])
+        subprocess.run(["python", "loop.py"], check=True)
 
         # Rename the output video
         output_video = f"chapter{chapter_number - total_chapters}.mp4"

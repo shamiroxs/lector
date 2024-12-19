@@ -141,10 +141,10 @@ def main():
         music_button = pygame.Rect(padding_left, description_box_top + 190, button_width, button_height)
         ebook_button = pygame.Rect(padding_left, description_box_top + 260, button_width, button_height)
         
-        # Right align the submit button and apply dark grey
+        # Right align the submit and resume buttons
         submit_button = pygame.Rect(600 - button_width - padding_left, description_box_top + 400, button_width, button_height)
+        resume_button = pygame.Rect(padding_left, description_box_top + 400, button_width, button_height)
 
-        # Button hover effect
         # Draw buttons with hover effect
         if image_button.collidepoint(mouse_pos):
             pygame.draw.rect(screen, HOVER_COLOR, image_button)
@@ -161,17 +161,23 @@ def main():
         else:
             pygame.draw.rect(screen, GREY, ebook_button)
 
-        # Draw the submit button with dark grey color
+        # Draw submit and resume buttons
         if submit_button.collidepoint(mouse_pos):
             pygame.draw.rect(screen, HOVER_COLOR, submit_button)
         else:
             pygame.draw.rect(screen, DARK_GREY, submit_button)
+
+        if resume_button.collidepoint(mouse_pos):
+            pygame.draw.rect(screen, HOVER_COLOR, resume_button)
+        else:
+            pygame.draw.rect(screen, DARK_GREY, resume_button)
 
         # Button labels
         draw_text("Select Image (.png)", small_font, BLACK, screen, padding_left + 10, description_box_top + 150)
         draw_text("Select Music (.mp3)", small_font, BLACK, screen, padding_left + 10, description_box_top + 220)
         draw_text("Select Ebook (.txt)", small_font, BLACK, screen, padding_left + 10, description_box_top + 290)
         draw_text("Submit", small_font, BLACK, screen, 600 - button_width - padding_left + 10, description_box_top + 410)
+        draw_text("Resume", small_font, BLACK, screen, padding_left + 10, description_box_top + 410)
 
         pygame.display.update()
 
@@ -216,10 +222,51 @@ def main():
                 # If we reach here, it means all required files are either uploaded or already exist
                 # Proceed to run chapter.py
                 pygame.quit()
+                subprocess.run(['python', 'reset_progress.py'])
+                subprocess.run(['python', 'delete.py'])
                 subprocess.run(['python', 'chapter.py'])
                 print("start merging..")
                 subprocess.run(['python', 'merge.py'])
                 subprocess.run(['python', 'details.py'])
+
+            if resume_button.collidepoint(event.pos):
+                # Resume logic, similar to submit but skipping delete.py
+                os.makedirs(input_folder, exist_ok=True)
+
+                # Save title and description
+                with open(os.path.join(input_folder, 'description.txt'), 'w') as f:
+                    f.write(f"{title}\n")
+                    f.write(f"{description}")
+
+                # Handle image file
+                if image_file:
+                    shutil.copy(image_file, os.path.join(input_folder, 'image.png'))
+                elif not os.path.exists(os.path.join(input_folder, 'image.png')):
+                    print("Image file not provided. Skipping...")
+                    image_file = None
+
+                # Handle music file
+                if music_file:
+                    shutil.copy(music_file, os.path.join(input_folder, 'background.mp3'))
+                elif not os.path.exists(os.path.join(input_folder, 'background.mp3')):
+                    print("Music file not provided. Skipping...")
+                    music_file = None
+
+                # Handle ebook file
+                if ebook_file:
+                    shutil.copy(ebook_file, os.path.join(input_folder, 'full.txt'))
+                elif not os.path.exists(os.path.join(input_folder, 'full.txt')):
+                    print("Error: Ebook file not provided. Please upload the ebook file to proceed.")
+                    continue  # Wait for ebook input
+
+                # If we reach here, it means all required files are either uploaded or already exist
+                # Proceed to run chapter.py
+                pygame.quit()
+                subprocess.run(['python', 'chapter.py'])
+                print("start merging..")
+                subprocess.run(['python', 'merge.py'])
+                subprocess.run(['python', 'details.py'])
+                
 
 # Run the main loop
 if __name__ == "__main__":
