@@ -113,7 +113,9 @@ If you want to add a reverb effect to the background music:
 
 ## **Limitations**
 - File upload uses `kdialog`, which is Linux-specific. For cross-platform compatibility, replace `kdialog` with `tkinter` or similar file dialogs.
-- Ensure proper chapter formatting in the ebook for smooth processing.
+- ebook should be in `.txt` format
+- ebook should have `Index` (with all chapters)
+- each chapter should be represented as `CHAPTER` and chapter numbers in `roman letters`.
 
 ---
 
