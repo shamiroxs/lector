@@ -38,16 +38,21 @@ def synthesize_text():
             time.sleep(3600)
 
             #try again
-            tts = gTTS(text=chunk, lang='en')
-            audio = io.BytesIO()
-            tts.write_to_fp(audio)
-            audio.seek(0)
+            try:
+            	# Generate TTS for the current chunk
+            	tts = gTTS(text=chunk, lang='en')
+            	audio = io.BytesIO()
+            	tts.write_to_fp(audio)
+            	audio.seek(0)
 
-            # Save this audio chunk to a file
-            audio_filename = f"audio_{i+1}.mp3"
-            with open(audio_filename, 'wb') as f:
-                f.write(audio.read())
-            audio_files.append(audio_filename)
+            	# Save this audio chunk to a file
+            	audio_filename = f"audio_{i+1}.mp3"
+            	with open(audio_filename, 'wb') as f:
+                	f.write(audio.read())
+            	audio_files.append(audio_filename)
+        	except Exception as e:
+            	return {"error": f"Error generating audio for chunk {i+1}: {str(e)}"}, 500
+            
 
     # Combine the audio files using pydub
     combined_audio = AudioSegment.empty()
