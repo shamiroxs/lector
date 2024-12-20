@@ -82,7 +82,7 @@ def main():
     start_chapter = total_chapters + last_completed_chapter + 1
     print(f"Resuming from Chapter {start_chapter - total_chapters}")
 
-    for chapter_number in range(start_chapter, 2 * total_chapters):
+    for chapter_number in range(start_chapter, 2 * total_chapters + 1):
         extract_chapter(full_file, chapter_number, output_file)
 
         # Run loop.py to process the current chapter
