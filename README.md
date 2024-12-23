@@ -116,6 +116,7 @@ If you want to add a reverb effect to the background music:
 - ebook should be in `.txt` format
 - ebook should have `Index` (with all chapters)
 - each chapter should be represented as `CHAPTER` and chapter numbers in `roman letters`.
+- ebook should not have special characters other than , " ' .
 
 ---
 
