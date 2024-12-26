@@ -222,12 +222,12 @@ def main():
                 # If we reach here, it means all required files are either uploaded or already exist
                 # Proceed to run chapter.py
                 pygame.quit()
-                subprocess.run(['python', 'reset_progress.py'])
-                subprocess.run(['python', 'delete.py'])
-                subprocess.run(['python', 'chapter.py'])
+                subprocess.run(['python', 'reset_progress.py'], check=True)
+                subprocess.run(['python', 'delete.py'], check=True)
+                subprocess.run(['python', 'chapter.py'], check=True)
                 print("start merging..")
-                subprocess.run(['python', 'merge.py'])
-                subprocess.run(['python', 'details.py'])
+                subprocess.run(['python', 'merge.py'], check=True)
+                subprocess.run(['python', 'details.py'], check=True)
 
             if resume_button.collidepoint(event.pos):
                 # Resume logic, similar to submit but skipping delete.py
@@ -262,10 +262,10 @@ def main():
                 # If we reach here, it means all required files are either uploaded or already exist
                 # Proceed to run chapter.py
                 pygame.quit()
-                subprocess.run(['python', 'chapter.py'])
+                subprocess.run(['python', 'chapter.py'], check=True)
                 print("start merging..")
-                subprocess.run(['python', 'merge.py'])
-                subprocess.run(['python', 'details.py'])
+                subprocess.run(['python', 'merge.py'], check=True)
+                subprocess.run(['python', 'details.py'], check=True)
                 
 
 # Run the main loop

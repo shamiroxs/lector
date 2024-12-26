@@ -11,7 +11,7 @@ def run_script(script_name):
 
 if __name__ == "__main__":
     # Define the scripts to run in order
-    scripts = ['text.py', 'audio.py', 'video.py']
+    scripts = ['text.py', 'segment.py', 'audio.py', 'video.py']
     
     # Execute each script in order
     for script in scripts:

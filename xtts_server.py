@@ -3,6 +3,7 @@ from gtts import gTTS
 import io
 import os
 from pydub import AudioSegment
+import time
 
 app = Flask(__name__)
 
@@ -22,6 +23,9 @@ def synthesize_text():
 
     for i, chunk in enumerate(text_chunks):
         try:
+            if i % 18 == 0:
+                print("suspend for 15 minutes")
+                time.sleep(900)
             # Generate TTS for the current chunk
             tts = gTTS(text=chunk, lang='en')
             audio = io.BytesIO()
@@ -34,7 +38,14 @@ def synthesize_text():
                 f.write(audio.read())
             audio_files.append(audio_filename)
         except Exception as e:
-            return {"error": f"Error generating audio for chunk {i+1}: {str(e)}"}, 500
+            i=i-1
+            print(f"Error generating audio for chunk {i+1}: {str(e)}")
+            print("suspend for 1 hour")
+            time.sleep(3600)
+            continue
+            #return {"error": f"Error generating audio for chunk {i+1}: {str(e)}"}, 500
+            
+            
 
     # Combine the audio files using pydub
     combined_audio = AudioSegment.empty()

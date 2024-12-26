@@ -36,7 +36,7 @@ def extract_chapter(full_file, chapter_number, output_file):
 
 def save_progress(chapter_number):
     """Save the last completed chapter to the progress file."""
-    progress = {"last_completed_chapter": chapter_number - total_chapters - 1}
+    progress = {"last_completed_chapter": chapter_number - total_chapters}
     with open(progress_file, 'w') as file:
         json.dump(progress, file)
     print(f"Progress saved: Chapter {chapter_number - total_chapters}")
