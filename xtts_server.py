@@ -23,7 +23,7 @@ def synthesize_text():
 
     for i, chunk in enumerate(text_chunks):
         try:
-            if i % 18 == 0:
+            if i % 18 == 0 and i != 0:
                 print("suspend for 15 minutes")
                 time.sleep(900)
             # Generate TTS for the current chunk
