@@ -6,6 +6,21 @@ from pydub import AudioSegment
 import time
 
 app = Flask(__name__)
+index_file = "index.txt"
+
+def save_index(index):
+    """Save the  index to a file."""
+    with open(index_file, 'w') as file:
+        file.write(str(index))
+    print(f" index saved: {index}")
+
+def load_index():
+    """Load the  index from a file."""
+    if os.path.exists(index_file):
+        with open(index_file, 'r') as file:
+            return int(file.read().strip())
+    return 0
+
 
 @app.route('/synthesize', methods=['POST'])
 def synthesize_text():
@@ -20,12 +35,18 @@ def synthesize_text():
 
     # Store audio files here
     audio_files = []
-
-    for i, chunk in enumerate(text_chunks):
+    
+    if not os.path.exists(index_file):
+        save_index(0)
+    
+    index = load_index()
+    
+    for i, chunk in enumerate(text_chunks, start=index):
         try:
             if i % 18 == 0 and i != 0:
                 print("suspend for 15 minutes")
                 time.sleep(900)
+                print("proceeding..")
             # Generate TTS for the current chunk
             tts = gTTS(text=chunk, lang='en')
             audio = io.BytesIO()
@@ -37,11 +58,13 @@ def synthesize_text():
             with open(audio_filename, 'wb') as f:
                 f.write(audio.read())
             audio_files.append(audio_filename)
+            save_index(i+1)
         except Exception as e:
-            i=i-1
             print(f"Error generating audio for chunk {i+1}: {str(e)}")
+            i=i-1
             print("suspend for 1 hour")
             time.sleep(3600)
+            print("proceeding..")
             continue
             #return {"error": f"Error generating audio for chunk {i+1}: {str(e)}"}, 500
             
@@ -59,7 +82,9 @@ def synthesize_text():
     # Clean up individual audio files
     for audio_file in audio_files:
         os.remove(audio_file)
-
+    
+    #starting indes to zero
+    save_index(0)
     # Return the combined audio file
     return send_file("combined_output.mp3", mimetype='audio/mpeg', as_attachment=True, download_name='output.mp3')
 
