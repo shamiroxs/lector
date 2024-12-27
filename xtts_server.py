@@ -4,6 +4,7 @@ import io
 import os
 from pydub import AudioSegment
 import time
+import subprocess
 
 app = Flask(__name__)
 index_file = "index.txt"
@@ -12,7 +13,6 @@ def save_index(index):
     """Save the  index to a file."""
     with open(index_file, 'w') as file:
         file.write(str(index))
-    print(f" index saved: {index}")
 
 def load_index():
     """Load the  index from a file."""
@@ -43,10 +43,8 @@ def synthesize_text():
     
     for i, chunk in enumerate(text_chunks, start=index):
         try:
-            if i % 18 == 0 and i != 0:
-                print("suspend for 15 minutes")
-                time.sleep(900)
-                print("proceeding..")
+        
+            print(f"Executing chunk {i+1}")
             # Generate TTS for the current chunk
             tts = gTTS(text=chunk, lang='en')
             audio = io.BytesIO()
@@ -62,8 +60,9 @@ def synthesize_text():
         except Exception as e:
             print(f"Error generating audio for chunk {i+1}: {str(e)}")
             i=i-1
-            print("suspend for 1 hour")
-            time.sleep(3600)
+            #print("suspend for 1 hour")
+            #time.sleep(3600)
+            subprocess.run(["python", "ip.py"], check=True)
             print("proceeding..")
             continue
             #return {"error": f"Error generating audio for chunk {i+1}: {str(e)}"}, 500
