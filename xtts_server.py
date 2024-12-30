@@ -40,33 +40,46 @@ def synthesize_text():
         save_index(0)
     
     index = load_index()
+    print(f"starting from {index+1}")
     
-    for i, chunk in enumerate(text_chunks, start=index):
-        try:
-        
-            print(f"Executing chunk {i+1}")
-            # Generate TTS for the current chunk
-            tts = gTTS(text=chunk, lang='en')
-            audio = io.BytesIO()
-            tts.write_to_fp(audio)
-            audio.seek(0)
+    # Append already generated audio files based on the current index
+    for i in range(index):
+        audio_files.append(f"audio_{i+1}.mp3")
+    max_retry=6
+    for i, chunk in enumerate(text_chunks[index:], start=index):
+        retry = 0
+        while retry < max_retry:
+            try:
+                print(f"Executing chunk {i+1}")
+                # Generate TTS for the current chunk
+                tts = gTTS(text=chunk, lang='en')
+                audio = io.BytesIO()
+                tts.write_to_fp(audio)
+                audio.seek(0)
 
-            # Save this audio chunk to a file
-            audio_filename = f"audio_{i+1}.mp3"
-            with open(audio_filename, 'wb') as f:
-                f.write(audio.read())
-            audio_files.append(audio_filename)
-            save_index(i+1)
-        except Exception as e:
-            print(f"Error generating audio for chunk {i+1}: {str(e)}")
-            i=i-1
-            #print("suspend for 1 hour")
-            #time.sleep(3600)
-            subprocess.run(["python", "ip.py"], check=True)
-            print("proceeding..")
-            continue
-            #return {"error": f"Error generating audio for chunk {i+1}: {str(e)}"}, 500
-            
+                # Save this audio chunk to a file
+                audio_filename = f"audio_{i+1}.mp3"
+                with open(audio_filename, 'wb') as f:
+                    f.write(audio.read())
+                audio_files.append(audio_filename)
+                save_index(i+1)
+                retry = max_retry
+            except Exception as e:
+                print(f"Error generating audio for chunk {i+1}: {str(e)}")
+                retry +=1
+                if(retry >= 3):
+                    print("suspend for 3 hour")
+                    time.sleep(10800)
+                elif(retry == 2):
+                    time.sleep(5)
+                    subprocess.run(["python", "ip.py"], check=True)
+                    time.sleep(60)
+                elif(retry <= 1):
+                    print("suspend for 1 hour")
+                    time.sleep(3600)
+                print("proceeding..")
+                #return {"error": f"Error generating audio for chunk {i+1}: {str(e)}"}, 500
+        
             
 
     # Combine the audio files using pydub
@@ -88,5 +101,5 @@ def synthesize_text():
     return send_file("combined_output.mp3", mimetype='audio/mpeg', as_attachment=True, download_name='output.mp3')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5001)
 

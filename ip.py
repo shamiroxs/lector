@@ -43,16 +43,26 @@ def set_random_ip(connection_name, interface, gateway="192.168.43.1"):
         subprocess.run(["nmcli", "connection", "down", connection_name], check=True)
         subprocess.run(["nmcli", "connection", "up", connection_name], check=True)
         print(f"Connection '{connection_name}' restarted successfully.")
+        
+        # After setting the random IP, run `sudo dhclient wlan0`
+        subprocess.run(["sudo", "dhclient", interface], check=True)
+        print(f"Executed 'sudo dhclient {interface}' to renew IP address.")
+        
     except subprocess.CalledProcessError as e:
-        print(f"Error executing nmcli: {e}")
+        print(f"Error executing nmcli or dhclient: {e}")
     except Exception as ex:
         print(f"An unexpected error occurred: {ex}")
 
 if __name__ == "__main__":
     interface = "wlan0"
+    
     connection_name = get_active_wifi_name(interface)
     if connection_name:
         print(f"Active WiFi connection: {connection_name}")
+        
+        subprocess.run(["sudo", "dhclient", "-r", interface], check=True)
+        print("Released the current IP address.")
+        
         set_random_ip(connection_name, interface)
     else:
         print("No active WiFi connection found on the specified interface.")
