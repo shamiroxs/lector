@@ -12,7 +12,10 @@ def generate_chapter_details(input_dir, output_file):
     # Get a sorted list of all files matching the pattern 'chapterX.mp4'
     chapter_files = sorted(
         [f for f in os.listdir(input_dir) if f.startswith("chapter") and f.endswith(".mp4")],
-        key=lambda x: int(x.replace("chapter", "").replace(".mp4", "")),
+        key=lambda x: (
+            int(re.search(r'chapter(\d+)', x).group(1)),  # Sort by X
+            float(re.search(r'chapter(\d+(?:\.\d+)?)', x).group(1))  # Then by X.Y
+        )
     )
     
     # Check if there are any files to process
