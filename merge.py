@@ -1,19 +1,23 @@
 import os
+import re
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 
 def merge_videos(input_dir, output_file):
-    # Get a sorted list of all files matching the pattern 'chapterX.mp4'
+    # Get a sorted list of all files matching the pattern 'chapterX.mp4' or 'chapterX.Y.mp4'
     chapter_files = sorted(
         [f for f in os.listdir(input_dir) if f.startswith("chapter") and f.endswith(".mp4")],
-        key=lambda x: int(x.replace("chapter", "").replace(".mp4", "")),
+        key=lambda x: (
+            int(re.search(r'chapter(\d+)', x).group(1)),  # Sort by X
+            float(re.search(r'chapter(\d+(?:\.\d+)?)', x).group(1))  # Then by X.Y
+        )
     )
-    
+
     # Check if there are any files to process
     if not chapter_files:
         print("No chapters found in the directory.")
         return
 
-    print(f"Found chapters: {chapter_files}")
+    print(f"Found chapters and subchapters: {chapter_files}")
 
     # Create a list of VideoFileClip objects
     video_clips = []
@@ -22,7 +26,7 @@ def merge_videos(input_dir, output_file):
         video_clips.append(VideoFileClip(full_path))
     
     # Concatenate all video clips
-    final_clip = concatenate_videoclips(video_clips)
+    final_clip = concatenate_videoclips(video_clips, method="compose")
     
     # Write the output to the file
     final_clip.write_videofile(output_file, codec="libx264", audio_codec="aac")
@@ -31,7 +35,7 @@ def merge_videos(input_dir, output_file):
 
 # Define the input directory and output file
 input_directory = "./chapters"
-output_filename = "./input/full_chapter.mp4"
+output_filename = "./chapters/full_chapter.mp4"
 
 # Merge the videos
 merge_videos(input_directory, output_filename)
