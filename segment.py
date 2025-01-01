@@ -75,7 +75,7 @@ def main():
         subprocess.run(["python", "video.py"], check=True)
 
         # Rename the resulting vout.mp4 to chapterY.X.mp4
-        chapter_file = f"chapter{current_chapter_number}.{i + 1}.mp4"
+        chapter_file = f"chapter{current_chapter_number -1}.{i + 1}.mp4"
         
         if os.path.exists(f"./chapters/{chapter_file}"):
             os.remove(f"./chapters/{chapter_file}")
