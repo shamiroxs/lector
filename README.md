@@ -2,6 +2,8 @@
 
 Lector is a Python-based project that transforms text into audio and video formats, providing a unique way to experience ebooks. With Lector, you can process large text files into chapter-wise videos with background music, making it an excellent tool for audiobook and video content creation.
 
+If you like this, you may also like [lector-subtitle](https://github.com/shamiroxs/lector-subtitle) project, which burn subtitles into videos.
+
 ---
 
 ## Run
